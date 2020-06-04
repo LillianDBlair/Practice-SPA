@@ -44,5 +44,6 @@ function addPicOnFromSubmit() {
       title: inputs[1].value
     };
     state.Gallery.pictures.push(newPic);
+    render(state.Gallery);
   });
 }
