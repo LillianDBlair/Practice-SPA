@@ -9,7 +9,10 @@ const render = (st = state.Home) => {
   ${Main(st)}
   ${Footer()}
   `;
+
+  addNavToggle();
   addNavEventListeners();
+  addPicOnFromSubmit();
 };
 
 render();
@@ -25,7 +28,21 @@ function addNavEventListeners() {
     });
   });
 }
-// add menu toggle to bars icon in nav bar
-document.querySelector(".fa-bars").addEventListener("click", () => {
-  document.querySelector("nav > ul").classList.toggle("hidden--mobile");
-});
+
+function addNavToggle() {
+  // add menu toggle to bars icon in nav bar
+  document.querySelector(".fa-bars").addEventListener("click", () => {
+    document.querySelector("nav > ul").classList.toggle("hidden--mobile");
+  });
+}
+function addPicOnFromSubmit() {
+  document.querySelector("form").addEventListener("submit", event => {
+    let inputs = event.target.elements;
+    event.preventDefault();
+    let newPic = {
+      url: inputs[0].value,
+      title: inputs[1].value
+    };
+    state.Gallery.pictures.push(newPic);
+  });
+}
