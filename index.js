@@ -3,6 +3,34 @@ import * as state from "./store";
 import Navigo from "navigo";
 import { capitalize } from "lodash";
 import axios from "axios";
+import auth from "./firebase";
+
+auth.createUserWithEmailAndPassword(email, password);
+auth.signInWithEmailAndPassword(email, password);
+auth.signOut(callback);
+auth.onAuthStateChanged(user => {
+  console.log(user);
+});
+
+import db from "./firebase";
+const coll = db.collection(/* collection name */);
+coll.add({
+  /* document Object */
+});
+coll
+  .get()
+  .then(collectionSnapshot =>
+    collectionSnapshot.docs.forEach(doc => console.log(doc.data()))
+  );
+
+coll
+  .doc(/* document ID */)
+  .get()
+  .then(documentSnapshot => console.log(documentSnapshot.data));
+
+  coll.doc( /* document ID */ ).update({ /* key */ : /* value */ });
+
+  coll.doc( /* document ID */ ).delete();
 
 const router = new Navigo(window.location.origin);
 
