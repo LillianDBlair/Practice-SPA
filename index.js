@@ -1,21 +1,8 @@
 import { Header, Nav, Main, Footer } from "./components";
 import * as state from "./store";
-
 import Navigo from "navigo";
 import { capitalize } from "lodash";
-
 import axios from "axios";
-
-axios
-  .get("https://jsonplaceholder.typicode.com/posts", {
-    headers: {
-      "Access-Control-Allow-Origin": window.location.origin
-    }
-  })
-  .then(response => {
-    state.Blog.posts.concat(response.data);
-    console.log(state.Blog);
-  });
 
 const router = new Navigo(window.location.origin);
 
@@ -23,6 +10,24 @@ router.on({
   ":page": params => render(state[capitalize(params.page)]),
   "/": () => render(state.Home)
 }).resolve;
+
+console.log("requesting data form API");
+axios
+  .get("https://jsonplaceholder.typicode.com/posts", {
+    headers: {
+      "Access-Control-Allow-Origin": window.location.origin
+    }
+  })
+  .then(response => {
+    console.log("API response received");
+    return response;
+  })
+  .then(response => {
+    console.log("response.dat", response.data);
+    response.data.forEach(post => {
+      state.Blog.posts.push(post);
+    });
+  });
 
 // function render() {} could also be used
 const render = (st = state.Home) => {
@@ -49,7 +54,6 @@ function addNavEventListeners() {
       // render(state[event.target.textContent]); is the same as below
       let selectedPage = event.target.textContent;
       let pieceOfState = state[selectedPage];
-      render(pieceOfState);
     });
   });
 }
