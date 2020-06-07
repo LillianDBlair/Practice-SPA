@@ -4,18 +4,25 @@ import * as state from "./store";
 import Navigo from "navigo";
 import { capitalize } from "lodash";
 
-const router = new Navigo(window.location.origin);
+import axios from "axios";
 
-router
-  .on({
-    "/": () => render(state.Home),
-    ":page": params => {
-      let page = capitalize(params.page);
-      render(state[page]);
+axios
+  .get("https://jsonplaceholder.typicode.com/posts", {
+    headers: {
+      "Access-Control-Allow-Origin": window.location.origin
     }
   })
+  .then(response => {
+    state.Blog.posts.concat(response.data);
+    console.log(state.Blog);
+  });
 
-  .resolve();
+const router = new Navigo(window.location.origin);
+
+router.on({
+  ":page": params => render(state[capitalize(params.page)]),
+  "/": () => render(state.Home)
+}).resolve;
 
 // function render() {} could also be used
 const render = (st = state.Home) => {
@@ -30,10 +37,10 @@ const render = (st = state.Home) => {
 
   addNavToggle();
   addNavEventListeners();
-  addPicOnFromSubmit();
+  addPicOnFromSubmit(st);
 };
 
-render();
+render(state.Home);
 
 function addNavEventListeners() {
   document.querySelectorAll("nav a").forEach(navLink => {
@@ -53,15 +60,17 @@ function addNavToggle() {
     document.querySelector("nav > ul").classList.toggle("hidden--mobile");
   });
 }
-function addPicOnFromSubmit() {
-  document.querySelector("form").addEventListener("submit", event => {
-    let inputs = event.target.elements;
-    event.preventDefault();
-    let newPic = {
-      url: inputs[0].value,
-      title: inputs[1].value
-    };
-    state.Gallery.pictures.push(newPic);
-    render(state.Gallery);
-  });
+function addPicOnFromSubmit(st) {
+  if (st.view === "Form") {
+    document.querySelector("form").addEventListener("submit", event => {
+      let inputs = event.target.elements;
+      event.preventDefault();
+      let newPic = {
+        url: inputs[0].value,
+        title: inputs[1].value
+      };
+      state.Gallery.pictures.push(newPic);
+      render(state.Gallery);
+    });
+  }
 }
